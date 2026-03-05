@@ -1,0 +1,39 @@
+{
+  "files": [
+    {
+      "chunkId": "319E1C6D4C6B2DF2",
+      "fileName": "chunk_0000_319E1C6D4C6B2DF2.gz",
+      "sizeBytes": 275620,
+      "url": "https://storage.example.com/backups/2025-01-15/319E1C6D4C6B2DF2.gz?token=b2cbdc4323df9204ab9c1a5bff7c97e53f5717eb&expires=1772740285494",
+      "expiresAt": "2026-03-05T19:51:25.494Z"
+    },
+    {
+      "chunkId": "0AA7E080DBD8FA89",
+      "fileName": "chunk_0001_0AA7E080DBD8FA89.gz",
+      "sizeBytes": 228215,
+      "url": "https://storage.example.com/backups/2025-01-15/0AA7E080DBD8FA89.gz?token=42e23bcdbf8ea27dfcd88538570d0f8c250bf320&expires=1772740285495",
+      "expiresAt": "2026-03-05T19:51:25.495Z"
+    },
+    {
+      "chunkId": "548435839F6E9392",
+      "fileName": "chunk_0002_548435839F6E9392.gz",
+      "sizeBytes": 285520,
+      "url": "https://storage.example.com/backups/2025-01-15/548435839F6E9392.gz?token=c478efe216551fb23fe6a72604b2198aaf490927&expires=1772740285495",
+      "expiresAt": "2026-03-05T19:51:25.495Z"
+    },
+    {
+      "chunkId": "D532C883FDCEA9EB",
+      "fileName": "chunk_0004_D532C883FDCEA9EB.gz",
+      "sizeBytes": 367807,
+      "url": "https://storage.example.com/backups/2025-01-15/D532C883FDCEA9EB.gz?token=3fd44f3cc3839a0a3d9458604795c68094865cc5&expires=1772740285495",
+      "expiresAt": "2026-03-05T19:51:25.495Z"
+    },
+    {
+      "chunkId": "CC86DB9761CAAE90",
+      "fileName": "chunk_0005_CC86DB9761CAAE90.gz",
+      "sizeBytes": 189943,
+      "url": "https://storage.example.com/backups/2025-01-15/CC86DB9761CAAE90.gz?token=4e180c3d841204d9214ecde14363406d1241a9c6&expires=1772740285495",
+      "expiresAt": "2026-03-05T19:51:25.495Z"
+    }
+  ]
+}

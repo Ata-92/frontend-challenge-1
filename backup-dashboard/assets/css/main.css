@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg-base: #080c08;
+  --bg-surface: #0e140e;
+  --bg-elevated: #131a13;
+  --bg-panel: #182018;
+
+  --border: #1e2e1e;
+  --border-bright: #2a3e2a;
+
+  --green-dim: #1a3d1c;
+  --green-mid: #2d9134;
+  --green-bright: #39b843;
+  --green-accent: #52cc5c;
+  --green-glow: #78e082;
+  --green-text: #9feda8;
+
+  --text-primary: #d4f5d8;
+  --text-secondary: #7aaa7e;
+  --text-muted: #4a664d;
+  --text-dim: #2d4530;
+
+  --red: #e05252;
+  --red-dim: #3d1a1a;
+  --amber: #e0a352;
+  --amber-dim: #3d2d1a;
+
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-sans: 'IBM Plex Sans', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-base);
+  /* Subtle scanline texture */
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 60, 0.012) 2px,
+    rgba(0, 255, 60, 0.012) 4px
+  );
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-bright);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--green-mid);
+}
+
+/* Custom selection */
+::selection {
+  background: var(--green-mid);
+  color: var(--bg-base);
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 1px solid var(--green-accent);
+  outline-offset: 2px;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 4px rgba(82, 204, 92, 0.3); }
+  50% { box-shadow: 0 0 12px rgba(82, 204, 92, 0.6); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scan {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(100vh); }
+}
+
+.fade-in {
+  animation: fade-in 0.3s ease forwards;
+}

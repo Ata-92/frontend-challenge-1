@@ -1,37 +1,43 @@
 <script setup lang="ts">
-import type { Chunk } from '~/types'
-import { useChunksStore } from '~/stores/chunks'
+import type { Chunk } from "~/types";
+import { useChunksStore } from "~/stores/chunks";
 
 const props = defineProps<{
-  chunk: Chunk
-  minute: number // could be empty slot
-  isEmpty?: boolean
-}>()
+  chunk?: Chunk;
+  minute: number;
+  hour: number;
+  isEmpty?: boolean;
+}>();
 
-const store = useChunksStore()
-const { formatBytes, formatRecords, formatTime } = useFormatters()
+const store = useChunksStore();
+const { formatBytes, formatRecords, formatTime } = useFormatters();
 
-const isSelected = computed(() => store.selectedIds.has(props.chunk?.id))
+const isSelected = computed(() => store.selectedIds.has(props.chunk?.id));
 
 const bgColor = computed(() => {
-  if (!props.chunk) return 'transparent'
-  return store.getChunkColor(props.chunk)
-})
+  if (!props.chunk) return "transparent";
+  return store.getChunkColor(props.chunk);
+});
 
 const opacity = computed(() => {
-  if (!props.chunk) return 0
-  return store.getChunkOpacity(props.chunk)
-})
+  if (!props.chunk) return 0;
+  return store.getChunkOpacity(props.chunk);
+});
 
 const tooltipText = computed(() => {
-  if (!props.chunk) return ''
-  const { hour, minute, dataCount, sizeBytes, compressionRatio, status } = props.chunk
-  return `${formatTime(hour, minute)} · ${formatRecords(dataCount)} records · ${formatBytes(sizeBytes)} · ${compressionRatio}x compression${status === 'corrupted' ? ' · ⚠ CORRUPTED' : ''}`
-})
+  if (!props.chunk) return "";
+  const { hour, minute, dataCount, sizeBytes, compressionRatio, status } =
+    props.chunk;
+  return `${formatTime(hour, minute)} · ${formatRecords(
+    dataCount
+  )} records · ${formatBytes(sizeBytes)} · ${compressionRatio}x compression${
+    status === "corrupted" ? " · ⚠ CORRUPTED" : ""
+  }`;
+});
 
 function handleClick() {
   if (props.chunk) {
-    store.toggleChunk(props.chunk.id)
+    store.toggleChunk(props.chunk.id);
   }
 }
 </script>
@@ -55,12 +61,20 @@ function handleClick() {
     @keydown.enter.prevent="handleClick"
   >
     <span v-if="isSelected" class="check-mark" aria-hidden="true">✓</span>
-    <span v-if="chunk.status === 'corrupted'" class="corrupt-mark" aria-hidden="true">!</span>
+    <span
+      v-if="chunk.status === 'corrupted'"
+      class="corrupt-mark"
+      aria-hidden="true"
+      >!</span
+    >
   </div>
   <div
     v-else
     class="heatmap-cell is-empty"
-    :title="`${minute.toString().padStart(2,'0')} — no data`"
+    :title="`${String(props.hour).padStart(2, '0')}:${String(minute).padStart(
+      2,
+      '0'
+    )} — no data`"
     aria-hidden="true"
   />
 </template>
@@ -87,7 +101,7 @@ function handleClick() {
 
 .heatmap-cell.is-selected {
   opacity: 1 !important;
-  box-shadow: 0 0 0 1.5px #52cc5c, 0 0 6px rgba(82, 204, 92, 0.5);
+  box-shadow: 0 0 0 2px #fff, 0 0 8px rgba(255, 255, 255, 0.3);
   transform: scale(1.1);
 }
 
@@ -98,22 +112,29 @@ function handleClick() {
 }
 
 .heatmap-cell.is-corrupted {
-  box-shadow: 0 0 0 1px var(--red) !important;
+  box-shadow: 0 0 0 2px var(--red) !important;
+  background-image: linear-gradient(
+    rgba(224, 82, 82, 0.35),
+    rgba(224, 82, 82, 0.35)
+  ) !important;
+  opacity: 1 !important;
 }
 
 .check-mark {
-  font-size: 7px;
-  color: var(--bg-base);
+  font-size: 9px;
+  color: #fff;
   font-weight: 700;
   line-height: 1;
   pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 .corrupt-mark {
-  font-size: 7px;
-  color: var(--red);
+  font-size: 9px;
+  color: #fff;
   font-weight: 700;
   line-height: 1;
   pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 </style>

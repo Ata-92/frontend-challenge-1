@@ -1,36 +1,43 @@
 <script setup lang="ts">
-import type { HourGroup } from '~/types'
-import { useChunksStore } from '~/stores/chunks'
+import type { HourGroup } from "~/types";
+import { useChunksStore } from "~/stores/chunks";
 
 const props = defineProps<{
-  group: HourGroup
-}>()
+  group: HourGroup;
+}>();
 
-const store = useChunksStore()
-const { formatBytes, formatRecords, formatRatio } = useFormatters()
+const store = useChunksStore();
+const { formatBytes, formatRecords, formatRatio } = useFormatters();
 
-const isSelected = store.isHourSelected(props.group.hour)
-const isIndeterminate = store.isHourIndeterminate(props.group.hour)
+const isSelected = store.isHourSelected(props.group.hour);
+const isIndeterminate = store.isHourIndeterminate(props.group.hour);
 
 // Build a map: minute -> chunk (for fast lookup)
 const chunkByMinute = computed(() => {
-  const map = new Map<number, typeof props.group.chunks[0]>()
-  props.group.chunks.forEach(c => map.set(c.minute, c))
-  return map
-})
+  const map = new Map<number, (typeof props.group.chunks)[0]>();
+  props.group.chunks.forEach((c) => map.set(c.minute, c));
+  return map;
+});
 
 function handleHourToggle() {
-  store.toggleHour(props.group.hour)
+  store.toggleHour(props.group.hour);
 }
 
-const hourLabel = computed(() => props.group.label.padStart(5, ' '))
+const hourLabel = computed(() => props.group.label.padStart(5, " "));
 </script>
 
 <template>
   <div class="hour-row">
     <!-- Hour label + checkbox -->
     <div class="hour-meta">
-      <label class="hour-checkbox-wrap" :title="`Select all chunks in ${group.label}`">
+      <label
+        class="hour-checkbox-wrap"
+        :title="
+          isSelected
+            ? `Deselect all chunks in ${group.label}`
+            : `Select all chunks in ${group.label}`
+        "
+      >
         <input
           type="checkbox"
           class="hour-checkbox"
@@ -44,12 +51,17 @@ const hourLabel = computed(() => props.group.label.padStart(5, ' '))
     </div>
 
     <!-- 60-minute heatmap grid -->
-    <div class="minute-grid" role="grid" :aria-label="`Hour ${group.label} chunks`">
+    <div
+      class="minute-grid"
+      role="grid"
+      :aria-label="`Hour ${group.label} chunks`"
+    >
       <HeatmapCell
         v-for="m in 60"
         :key="m - 1"
         :chunk="chunkByMinute.get(m - 1)!"
         :minute="m - 1"
+        :hour="group.hour"
         :is-empty="!chunkByMinute.has(m - 1)"
       />
     </div>
@@ -58,15 +70,21 @@ const hourLabel = computed(() => props.group.label.padStart(5, ' '))
     <div class="hour-stats">
       <span class="stat">
         <span class="stat-label">REC</span>
-        <span class="stat-value">{{ formatRecords(group.stats.totalRecords) }}</span>
+        <span class="stat-value">{{
+          formatRecords(group.stats.totalRecords)
+        }}</span>
       </span>
       <span class="stat">
         <span class="stat-label">SIZE</span>
-        <span class="stat-value">{{ formatBytes(group.stats.totalSizeBytes) }}</span>
+        <span class="stat-value">{{
+          formatBytes(group.stats.totalSizeBytes)
+        }}</span>
       </span>
       <span class="stat">
         <span class="stat-label">RATIO</span>
-        <span class="stat-value">{{ formatRatio(group.stats.compressionRatio) }}</span>
+        <span class="stat-value">{{
+          formatRatio(group.stats.compressionRatio)
+        }}</span>
       </span>
       <span class="stat chunks-stat">
         <span class="stat-label">CHK</span>
@@ -124,7 +142,7 @@ const hourLabel = computed(() => props.group.label.padStart(5, ' '))
 }
 
 .hour-checkbox:checked::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 1px;
   left: 3px;
@@ -142,7 +160,7 @@ const hourLabel = computed(() => props.group.label.padStart(5, ' '))
 }
 
 .hour-checkbox:indeterminate::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -186,7 +204,7 @@ const hourLabel = computed(() => props.group.label.padStart(5, ' '))
 .stat-label {
   font-family: var(--font-mono);
   font-size: 8px;
-  color: var(--text-dim);
+  color: var(--text-secondary);
   letter-spacing: 0.1em;
   line-height: 1;
 }
@@ -199,7 +217,7 @@ const hourLabel = computed(() => props.group.label.padStart(5, ' '))
 }
 
 .chunks-stat .stat-value {
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 @media (max-width: 900px) {

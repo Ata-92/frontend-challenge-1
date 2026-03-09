@@ -3,13 +3,19 @@ import { useChunksStore } from "~/stores/chunks";
 
 const store = useChunksStore();
 const { formatBytes, formatRecords, formatNumber } = useFormatters();
+const { register } = useTooltip();
 
 const showDownloadModal = ref(false);
 const showDeleteModal = ref(false);
 
-// Fetch data on mount
+// Tooltip ref
+const tooltipRef = ref();
 onMounted(() => {
   store.fetchChunks();
+  if (tooltipRef.value) register(tooltipRef.value);
+});
+watch(tooltipRef, (val) => {
+  if (val) register(val);
 });
 
 // Action toolbar state
@@ -22,6 +28,23 @@ function openDownload() {
 function openDelete() {
   if (canAct.value) showDeleteModal.value = true;
 }
+
+// Corrupted filter
+const showOnlyCorrupted = ref(false);
+
+const corruptedCount = computed(
+  () => store.allChunks.filter((c) => c.status === "corrupted").length
+);
+
+const filteredGroups = computed(() => {
+  if (!showOnlyCorrupted.value) return store.groups;
+  return store.groups
+    .map((g) => ({
+      ...g,
+      chunks: g.chunks.filter((c) => c.status === "corrupted"),
+    }))
+    .filter((g) => g.chunks.length > 0);
+});
 </script>
 
 <template>
@@ -84,6 +107,21 @@ function openDelete() {
         </div>
 
         <div class="action-buttons">
+          <button
+            class="action-btn corrupted-filter"
+            :class="{ active: showOnlyCorrupted }"
+            @click="showOnlyCorrupted = !showOnlyCorrupted"
+            :title="
+              showOnlyCorrupted
+                ? 'Show all chunks'
+                : 'Show only corrupted chunks'
+            "
+          >
+            <span class="btn-icon">!</span>
+            Corrupted<span v-if="corruptedCount > 0"
+              >({{ corruptedCount }})</span
+            >
+          </button>
           <button
             class="action-btn download"
             :disabled="!canAct"
@@ -160,9 +198,10 @@ function openDelete() {
         <!-- Hour rows -->
         <div class="hour-list" role="grid" aria-label="Backup chunk heatmap">
           <HourRow
-            v-for="group in store.groups"
+            v-for="group in filteredGroups"
             :key="group.hour"
             :group="group"
+            :focused-id="store.focusedId"
           />
         </div>
       </div>
@@ -174,6 +213,9 @@ function openDelete() {
     <!-- ── MODALS ── -->
     <DownloadModal v-model="showDownloadModal" />
     <DeleteModal v-model="showDeleteModal" />
+
+    <!-- ── TOOLTIP ── -->
+    <ChunkTooltip ref="tooltipRef" />
   </div>
 </template>
 
@@ -249,7 +291,7 @@ function openDelete() {
 .header-sub {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   letter-spacing: 0.06em;
 }
 
@@ -385,6 +427,22 @@ function openDelete() {
 .action-btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+}
+
+.action-btn.corrupted-filter {
+  background: var(--bg-elevated);
+  border-color: var(--border-bright);
+  color: var(--text-muted);
+}
+.action-btn.corrupted-filter:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: var(--red-dim);
+}
+.action-btn.corrupted-filter.active {
+  background: var(--red-dim);
+  border-color: var(--red);
+  color: var(--red);
 }
 
 .action-btn.download {

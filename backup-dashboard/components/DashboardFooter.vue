@@ -84,7 +84,7 @@ const { formatBytes, formatRecords, formatNumber } = useFormatters()
 .stat-label {
   font-family: var(--font-mono);
   font-size: 8px;
-  color: var(--text-dim);
+  color: var(--text-secondary);
   letter-spacing: 0.12em;
   line-height: 1;
 }
@@ -112,7 +112,7 @@ const { formatBytes, formatRecords, formatNumber } = useFormatters()
 .scale-label {
   font-family: var(--font-mono);
   font-size: 9px;
-  color: var(--text-dim);
+  color: var(--text-secondary);
   letter-spacing: 0.08em;
 }
 

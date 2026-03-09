@@ -7,12 +7,15 @@ const props = defineProps<{
   minute: number;
   hour: number;
   isEmpty?: boolean;
+  isFocused?: boolean;
 }>();
 
 const store = useChunksStore();
-const { formatBytes, formatRecords, formatTime } = useFormatters();
+const { showTooltip, hideTooltip, moveTooltip } = useTooltip();
 
-const isSelected = computed(() => store.selectedIds.has(props.chunk?.id));
+const isSelected = computed(
+  () => !!props.chunk && store.selectedIds.has(props.chunk.id)
+);
 
 const bgColor = computed(() => {
   if (!props.chunk) return "transparent";
@@ -24,21 +27,23 @@ const opacity = computed(() => {
   return store.getChunkOpacity(props.chunk);
 });
 
-const tooltipText = computed(() => {
-  if (!props.chunk) return "";
-  const { hour, minute, dataCount, sizeBytes, compressionRatio, status } =
-    props.chunk;
-  return `${formatTime(hour, minute)} · ${formatRecords(
-    dataCount
-  )} records · ${formatBytes(sizeBytes)} · ${compressionRatio}x compression${
-    status === "corrupted" ? " · ⚠ CORRUPTED" : ""
-  }`;
-});
-
 function handleClick() {
   if (props.chunk) {
     store.toggleChunk(props.chunk.id);
+    store.setFocused(props.chunk.id);
   }
+}
+
+function handleMouseEnter(e: MouseEvent) {
+  if (props.chunk) showTooltip(props.chunk, e);
+}
+
+function handleMouseMove(e: MouseEvent) {
+  if (props.chunk) moveTooltip(e);
+}
+
+function handleMouseLeave() {
+  hideTooltip();
 }
 </script>
 
@@ -49,13 +54,18 @@ function handleClick() {
     :class="{
       'is-selected': isSelected,
       'is-corrupted': chunk.status === 'corrupted',
+      'is-focused': isFocused,
     }"
     :style="{ backgroundColor: bgColor, opacity }"
-    :title="tooltipText"
     @click="handleClick"
+    @mouseenter="handleMouseEnter"
+    @mousemove="handleMouseMove"
+    @mouseleave="handleMouseLeave"
     role="checkbox"
     :aria-checked="isSelected"
-    :aria-label="tooltipText"
+    :aria-label="`${String(chunk.hour).padStart(2, '0')}:${String(
+      chunk.minute
+    ).padStart(2, '0')}`"
     tabindex="0"
     @keydown.space.prevent="handleClick"
     @keydown.enter.prevent="handleClick"
@@ -112,7 +122,7 @@ function handleClick() {
 }
 
 .heatmap-cell.is-corrupted {
-  box-shadow: 0 0 0 2px var(--red) !important;
+  box-shadow: 0 0 0 2.5px var(--red), 0 0 8px rgba(224, 82, 82, 0.4) !important;
   background-image: linear-gradient(
     rgba(224, 82, 82, 0.35),
     rgba(224, 82, 82, 0.35)
@@ -126,15 +136,21 @@ function handleClick() {
   font-weight: 700;
   line-height: 1;
   pointer-events: none;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.heatmap-cell.is-focused {
+  outline: 2px solid var(--green-glow);
+  outline-offset: 1px;
+  z-index: 5;
 }
 
 .corrupt-mark {
-  font-size: 9px;
-  color: #fff;
+  font-size: 11px;
+  color: var(--red);
   font-weight: 700;
   line-height: 1;
   pointer-events: none;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 1);
 }
 </style>

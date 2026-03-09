@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import type { HourGroup } from "~/types";
 import { useChunksStore } from "~/stores/chunks";
+import type { HourGroup } from "~/types";
 
 const props = defineProps<{
   group: HourGroup;
+  focusedId?: string | null;
 }>();
 
 const store = useChunksStore();
@@ -63,6 +64,7 @@ const hourLabel = computed(() => props.group.label.padStart(5, " "));
         :minute="m - 1"
         :hour="group.hour"
         :is-empty="!chunkByMinute.has(m - 1)"
+        :is-focused="focusedId === chunkByMinute.get(m - 1)?.id"
       />
     </div>
 
@@ -204,7 +206,7 @@ const hourLabel = computed(() => props.group.label.padStart(5, " "));
 .stat-label {
   font-family: var(--font-mono);
   font-size: 8px;
-  color: var(--text-secondary);
+  color: var(--text-dim);
   letter-spacing: 0.1em;
   line-height: 1;
 }
@@ -217,7 +219,7 @@ const hourLabel = computed(() => props.group.label.padStart(5, " "));
 }
 
 .chunks-stat .stat-value {
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
 @media (max-width: 900px) {

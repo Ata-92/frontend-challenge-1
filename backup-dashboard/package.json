@@ -12,12 +12,14 @@
   "dependencies": {
     "@nuxt/ui": "^3.0.0",
     "@pinia/nuxt": "^0.10.1",
+    "fflate": "^0.8.2",
     "nuxt": "^3.17.0",
-    "pinia": "^2.3.0",
+    "pinia": "^3.0.1",
     "vue": "^3.5.0"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@types/node": "^25.3.5",
     "typescript": "^5.0.0"
   }
 }

@@ -107,20 +107,17 @@ function close() {
 
               <!-- File list (limited to 8, with overflow) -->
               <div class="file-list">
-                <div
-                  v-for="chunk in snapshotChunks.slice(0, 8)"
-                  :key="chunk.id"
-                  class="file-item"
-                  :class="{ 'is-corrupted': chunk.status === 'corrupted' }"
-                >
-                  <span class="file-time">{{ String(chunk.hour).padStart(2,'0') }}:{{ String(chunk.minute).padStart(2,'0') }}</span>
-                  <span class="file-id">{{ chunk.id }}</span>
-                  <span class="file-size">{{ formatBytes(chunk.sizeBytes) }}</span>
-                  <span v-if="chunk.status === 'corrupted'" class="file-corrupt-badge">CORRUPTED</span>
-                </div>
-                <div v-if="snapshotChunks.length > 8" class="overflow-note">
-                  + {{ snapshotChunks.length - 8 }} more files
-                </div>
+              <div
+                v-for="chunk in snapshotChunks"
+                :key="chunk.id"
+                class="file-item"
+                :class="{ 'is-corrupted': chunk.status === 'corrupted' }"
+              >
+                <span class="file-time">{{ String(chunk.hour).padStart(2,'0') }}:{{ String(chunk.minute).padStart(2,'0') }}</span>
+                <span class="file-id">{{ chunk.id }}</span>
+                <span class="file-size">{{ formatBytes(chunk.sizeBytes) }}</span>
+                <span v-if="chunk.status === 'corrupted'" class="file-corrupt-badge">CORRUPTED</span>
+              </div>
               </div>
 
               <!-- API error -->

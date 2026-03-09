@@ -1,36 +1,27 @@
 <script setup lang="ts">
-import { useChunksStore } from '~/stores/chunks'
+import { useChunksStore } from "~/stores/chunks";
 
-const store = useChunksStore()
-const { formatBytes, formatRecords, formatNumber } = useFormatters()
+const store = useChunksStore();
+const { formatBytes, formatRecords, formatNumber } = useFormatters();
 
-const showDownloadModal = ref(false)
-const showDeleteModal = ref(false)
+const showDownloadModal = ref(false);
+const showDeleteModal = ref(false);
 
 // Fetch data on mount
 onMounted(() => {
-  store.fetchChunks()
-})
+  store.fetchChunks();
+});
 
 // Action toolbar state
-const canAct = computed(() => store.selectedCount > 0)
+const canAct = computed(() => store.selectedCount > 0);
 
 function openDownload() {
-  if (canAct.value) showDownloadModal.value = true
+  if (canAct.value) showDownloadModal.value = true;
 }
 
 function openDelete() {
-  if (canAct.value) showDeleteModal.value = true
+  if (canAct.value) showDeleteModal.value = true;
 }
-
-// Minute labels for axis
-const minuteLabels = computed(() => {
-  const labels: string[] = []
-  for (let i = 0; i < 60; i += 10) {
-    labels.push(String(i).padStart(2, '0'))
-  }
-  return labels
-})
 </script>
 
 <template>
@@ -40,7 +31,12 @@ const minuteLabels = computed(() => {
       <div class="header-left">
         <div class="logo-mark">
           <div class="logo-grid">
-            <span v-for="i in 9" :key="i" class="logo-dot" :style="{ animationDelay: `${i * 0.1}s` }" />
+            <span
+              v-for="i in 9"
+              :key="i"
+              class="logo-dot"
+              :style="{ animationDelay: `${i * 0.1}s` }"
+            />
           </div>
         </div>
         <div class="header-text">
@@ -52,7 +48,12 @@ const minuteLabels = computed(() => {
       <!-- Action toolbar -->
       <div class="action-bar">
         <!-- Select all -->
-        <label class="select-all-wrap" title="Select / deselect all chunks">
+        <label
+          class="select-all-wrap"
+          :title="
+            store.isAllSelected ? 'Deselect all chunks' : 'Select all chunks'
+          "
+        >
           <input
             type="checkbox"
             class="select-all-checkbox"
@@ -62,14 +63,24 @@ const minuteLabels = computed(() => {
             aria-label="Select all chunks"
           />
           <span class="select-all-label">
-            {{ store.isAllSelected ? 'Deselect All' : 'Select All' }}
+            {{ store.isAllSelected ? "Deselect All" : "Select All" }}
           </span>
         </label>
 
         <div v-if="store.selectedCount > 0" class="selection-info">
-          <span class="sel-count">{{ formatNumber(store.selectedCount) }} selected</span>
-          <span class="sel-size">{{ formatBytes(store.totalSelectedSize) }}</span>
-          <button class="clear-btn" @click="store.clearSelection" title="Clear selection">×</button>
+          <span class="sel-count"
+            >{{ formatNumber(store.selectedCount) }} selected</span
+          >
+          <span class="sel-size">{{
+            formatBytes(store.totalSelectedSize)
+          }}</span>
+          <button
+            class="clear-btn"
+            @click="store.clearSelection"
+            title="Clear selection"
+          >
+            ×
+          </button>
         </div>
 
         <div class="action-buttons">
@@ -77,7 +88,11 @@ const minuteLabels = computed(() => {
             class="action-btn download"
             :disabled="!canAct"
             @click="openDownload"
-            :title="canAct ? `Download ${store.selectedCount} chunks` : 'Select chunks to download'"
+            :title="
+              canAct
+                ? `Download ${store.selectedCount} chunks`
+                : 'Select chunks to download'
+            "
           >
             <span class="btn-icon">↓</span>
             Download<span v-if="canAct">({{ store.selectedCount }})</span>
@@ -86,7 +101,11 @@ const minuteLabels = computed(() => {
             class="action-btn delete"
             :disabled="!canAct"
             @click="openDelete"
-            :title="canAct ? `Delete ${store.selectedCount} chunks` : 'Select chunks to delete'"
+            :title="
+              canAct
+                ? `Delete ${store.selectedCount} chunks`
+                : 'Select chunks to delete'
+            "
           >
             <span class="btn-icon">✕</span>
             Delete<span v-if="canAct">({{ store.selectedCount }})</span>
@@ -103,7 +122,12 @@ const minuteLabels = computed(() => {
           <div v-for="i in 24" :key="i" class="loading-row">
             <div class="loading-label" />
             <div class="loading-cells">
-              <div v-for="j in 60" :key="j" class="loading-cell" :style="{ animationDelay: `${(i * 60 + j) * 3}ms` }" />
+              <div
+                v-for="j in 60"
+                :key="j"
+                class="loading-cell"
+                :style="{ animationDelay: `${(i * 60 + j) * 3}ms` }"
+              />
             </div>
           </div>
         </div>
@@ -123,11 +147,12 @@ const minuteLabels = computed(() => {
         <div class="axis-header">
           <div class="axis-spacer" />
           <div class="axis-labels">
-            <span
-              v-for="label in minuteLabels"
-              :key="label"
-              class="axis-label"
-            >:{{ label }}</span>
+            <template v-for="g in 6" :key="g">
+              <span class="axis-label"
+                >:{{ String((g - 1) * 10).padStart(2, "0") }}</span
+              >
+              <span v-for="m in 9" :key="m" class="axis-cell" />
+            </template>
           </div>
           <div class="axis-stats-spacer" />
         </div>
@@ -199,8 +224,12 @@ const minuteLabels = computed(() => {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
-.logo-dot:nth-child(even) { background: var(--green-mid); }
-.logo-dot:nth-child(3n) { background: var(--green-glow); }
+.logo-dot:nth-child(even) {
+  background: var(--green-mid);
+}
+.logo-dot:nth-child(3n) {
+  background: var(--green-glow);
+}
 
 .header-text {
   display: flex;
@@ -220,7 +249,7 @@ const minuteLabels = computed(() => {
 .header-sub {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   letter-spacing: 0.06em;
 }
 
@@ -260,7 +289,7 @@ const minuteLabels = computed(() => {
 }
 
 .select-all-checkbox:checked::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 1px;
   left: 3px;
@@ -278,7 +307,7 @@ const minuteLabels = computed(() => {
 }
 
 .select-all-checkbox:indeterminate::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -328,7 +357,9 @@ const minuteLabels = computed(() => {
   padding: 0 2px;
   transition: color 0.15s;
 }
-.clear-btn:hover { color: var(--text-primary); }
+.clear-btn:hover {
+  color: var(--text-primary);
+}
 
 .action-buttons {
   display: flex;
@@ -400,20 +431,32 @@ const minuteLabels = computed(() => {
   margin-bottom: 2px;
 }
 
-.axis-spacer { }
-.axis-stats-spacer { }
+.axis-spacer {
+}
+.axis-stats-spacer {
+}
 
 .axis-labels {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(60, 1fr);
+  gap: 1.5px;
   padding: 0 1px;
 }
 
 .axis-label {
   font-family: var(--font-mono);
   font-size: 9px;
-  color: var(--text-dim);
+  color: var(--text-secondary);
   letter-spacing: 0.04em;
+  grid-column: span 1;
+  text-align: left;
+  overflow: visible;
+  white-space: nowrap;
+  margin-left: -3px;
+}
+
+.axis-cell {
+  grid-column: span 1;
 }
 
 /* ── HOUR LIST ── */
@@ -464,8 +507,13 @@ const minuteLabels = computed(() => {
 }
 
 @keyframes shimmer {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 .loading-text {
@@ -532,10 +580,14 @@ const minuteLabels = computed(() => {
     min-height: auto;
     gap: 10px;
   }
-  .dash-main { padding: 12px 16px 0; }
+  .dash-main {
+    padding: 12px 16px 0;
+  }
   .axis-header {
     grid-template-columns: 70px 1fr;
   }
-  .axis-stats-spacer { display: none; }
+  .axis-stats-spacer {
+    display: none;
+  }
 }
 </style>
